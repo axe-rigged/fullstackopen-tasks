@@ -1,5 +1,5 @@
 import { useState } from 'react'
-const points = [0,0,0,0,0,0,0]
+
 const App = () => {
 	//mahdollisesti objecti kaikille lauseille joissa on votea tai sitten functio tapaa järjestetty määrä
 	const anecdotes = [
@@ -13,8 +13,8 @@ const App = () => {
 	]
 	const [selected, setSelected] = useState(0)
 	//TArvitaan statet, koska ulkopuolinen ei päivitetty vaan constina ja resetta renderin vaihteessa myös.
-	//Ei anna meidän slice tai muuta valuealla
-	//const [points, setPoints] = useState([0,0,0,0,0,0,0])
+	//Pitää käyttää Array(), koska suora annettu valuet on eri asia.
+	const [points, setPoints] = useState(Array(anecdotes.length).fill(0))
 	const [h, setH] = useState(0)	
 	
 	//Mozilla devista
@@ -31,10 +31,14 @@ const App = () => {
 
 	const nextline = () => {
 		setSelected(Math.floor(getRandom(0, anecdotes.length)));
-		sorter();
+		
 	}
 	const vote = () =>{
-			points[selected] +=1;
+			//Kopioidaan jotta voidaa tallentaa oikein stateen. Ei saa suoraa statea muokata
+			var plus = [...points]
+			plus[selected] +=1;
+			setPoints(plus)
+			sorter();
 	}
 	
 

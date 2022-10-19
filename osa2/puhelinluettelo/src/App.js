@@ -6,13 +6,14 @@ import Services from './services/back'
 import './index.css'
 import Notification from './components/error'
 
+// En ole varma olisko hyvä idea tehdä yksi ojecti jota muuttaa ja käyttää tässä, mutta huonoja tapahtunut delayn kanssa
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [check, setCheck] = useState('')
   const [message, setMessage] = useState('Nice')
-  const [stat, setStat] = useState(true)
+  const [stat, setStat] = useState()
 
 	useEffect(()=>{
 		Services.getA().then(response=>{setPersons(response.data)})
@@ -30,6 +31,9 @@ const App = () => {
 			var id = persons.find(x=>x.name === newName)
 			Services.update(id.id, {...id, number:newNumber})
 			Services.getA().then(response=>{setPersons(response.data)})
+			setMessage(`Information of ${id.name} has been updated`)
+			setStat(true)
+			setTimeout(()=>{setMessage(null)}, 5000)
 		}
 	}
 	else{
@@ -39,6 +43,7 @@ const App = () => {
 		setStat(true)
 		setNewName('');
 		setNewNumber('');
+		setTimeout(()=>{setMessage(null)}, 5000)
 	}
   }
 	// Jonkin syyn takia promise base ei toimi jos on peräkanaan saman blockin sisällä.
@@ -46,7 +51,11 @@ const App = () => {
 	const sureDelete = (name, id) => {
 		if(window.confirm(`Delete ${name}?`)){
 			Services.dele(id)
-			//Tähän catch joka printaa nimen ja jne. Tee myös fade away effecti
+			.catch(error=>{
+				setMessage(`Information of ${name} has already be deleted.`)
+				setStat(false)
+				setTimeout(()=>{setMessage(null)}, 5000)
+			})
 		}
 		Services.getA().then(response=>{setPersons(response.data)})
 }	
@@ -54,7 +63,7 @@ const App = () => {
   const filterChange = (event) => {setCheck(event.target.value)}
   const nameX = (event) => {setNewName(event.target.value)}
   const nameY = (event) => {setNewNumber(event.target.value)}
-
+	//HYvä muistaa et data jota ei renderidä tapahtuu yhden päivityksen hitaamin.
   const filtered = persons.filter(person => person.name.toLowerCase().includes(check));
   
   return (

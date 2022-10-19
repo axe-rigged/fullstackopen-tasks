@@ -34,7 +34,8 @@ function App() {
 			<input value={country} onChange={(event)=>{setCountry(event.target.value)}}/>
 			<br/>
 			{
-				filtCountry.map((theCountry, key)=><div>
+				filtCountry.map((theCountry, key)=>
+					<div>
 					<h1 key={key}>{theCountry.name.common}</h1>
 					<p>Capital: {theCountry.capital}</p>
 					<p>Area: {theCountry.area}</p>
@@ -46,8 +47,9 @@ function App() {
 						)
 					}
 					<br/>
-					<img src={theCountry.flags.png} alt="Flag of the country"/>
 					</ul>
+					<img src={theCountry.flags.png} alt="Flag of the country"/>
+					<h2>Weather of {theCountry.name.common}</h2>
 					</div>
 				)
 			}
